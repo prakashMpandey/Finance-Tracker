@@ -1,0 +1,112 @@
+{% extends "layout.html" %}
+
+{% block  title%}transactions{% endblock  %}
+
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4"> Transactions</h1>
+
+
+    <div>
+        <form action="{% url 'transactions' %}"  method="post">
+
+            {% csrf_token %}
+
+
+             <div class="row g-3 align-items-center mb-4">
+
+                 <div class="col-auto">
+                    <label for="category" class="col-form-label">Category</label>
+                </div>
+                <div class="col-auto">
+
+                   <select name="category" id="category" default="all_categories" class="form-select">
+
+                    
+                    <option value="0">All Categories</option>
+                    {% for category in categories %}
+                    <option value="{{category.id}}">{{category.c_name}}</option>
+                    {% endfor %}
+                   </select>
+                </div>
+                <div class="col-auto">
+                    <label for="month" class="col-form-label">Month</label>
+                </div>
+                <div class="col-auto">
+                    <input type="month" id="month" name="month" class="form-control">
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+           
+              
+            </div>
+        </form>
+    </div>
+
+
+<div class=" h-full">
+
+            <div class="card shadow-lg rounded-4 p-4 h-100">
+
+                <div class="table-responsive" style="max-height:300px; overflow-y:auto;">
+                    <table class="table table-dark table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Amount</th>
+                                <th>Type</th>
+                                <th>Category</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for transaction in transactions %}
+                            <tr>
+                                <td>{{ transaction.t_name }}</td>
+                                <td>₹ {{ transaction.amount }}</td>
+                                <td>
+                                    <span class="badge 
+                                        {% if transaction.type == 'income' %}
+                                            bg-success
+                                        {% else %}
+                                            bg-danger
+                                        {% endif %}
+                                    ">
+                                        {{ transaction.type }}
+                                    </span>
+                                </td>
+                                 <td> {{ transaction.category }}</td>
+                                <td>{{ transaction.date }}</td>
+                                <td><a href="{%url 'edit_transaction' transaction.id%}" class='btn btn-primary'>Edit</a></td>
+                                <td><a href="{%url 'delete_transaction' transaction.id%}" class='btn btn-danger'>Delete</a></td>
+                        
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+<nav aria-label="Page navigation example">
+
+    <ul class="pagination mx-auto">
+      {% if  transactions.has_previous %}
+    <li class="page-item"><a class="page-link" href="{%url 'transactions'%}?page={{transactions.previous_page_number}}">Previous</a></li>
+    {%endif%}
+    <li class="page-item"><a class="page-link" href="{% url 'transactions' %}?page=1">1</a></li>
+    <li class="page-item"><a class="page-link" href="{% url 'transactions' %}?page=2">2</a></li>
+    <li class="page-item"><a class="page-link" href="{% url 'transactions' %}?page=3">3</a></li>
+
+      {% if  transactions.has_next %}
+    <li class="page-item"><a class="page-link" href="{%url 'transactions'%}?page={{transactions.next_page_number}}">Next</a></li>
+    {%endif%}
+  </ul>
+</nav>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+</div>
+{% endblock  %}
